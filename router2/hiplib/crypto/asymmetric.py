@@ -24,6 +24,12 @@ from Crypto.Signature import DSS
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pss
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.backends import default_backend
+
 
 """
 Base 64 encoding decoding routines
@@ -45,52 +51,84 @@ class ECDSASHA256Signature(Signature):
 	def __init__(self, key):
 		self.key = key;
 	def sign(self, data):
-		h = SHA256.new(data)
-		signer = DSS.new(self.key, 'fips-186-3')
-		signature = signer.sign(h);
-		return signature
-	def verify(self, sig, data):
-		h = SHA256.new(data)
-		verifier = DSS.new(self.key, 'fips-186-3')
-		try:
-			verifier.verify(h, bytes(sig))
-			return True
-		except:
-			return False
+        	digest = hashes.Hash(hashes.SHA256())
+        	digest.update(data)
+        	hash = digest.finalize()
+
+        	signature = self.key.sign(
+            		hash,
+            	ec.ECDSA(Prehashed(hashes.SHA256()))
+        	)
+        	return signature
+	def verify(self, signature, data):
+        	digest = hashes.Hash(hashes.SHA256())
+        	digest.update(data)
+        	hash = digest.finalize()
+        	try:
+            		this.key.verify(
+                	signature,
+                		hash,
+                	ec.ECDSA(Prehashed(hashes.SHA256()))
+            	)
+            		return True
+        	except InvalidSignature:
+            		return False
 
 class ECDSASHA384Signature(Signature):
 	ALG_ID = 0x7;
 	def __init__(self, key):
 		self.key = key;
 	def sign(self, data):
-		h = SHA384.new(data)
-		signer = DSS.new(self.key, 'fips-186-3')
-		return signer.sign(h);
-	def verify(self, sig, data):
-		h = SHA384.new(data)
-		verifier = DSS.new(self.key, 'fips-186-3')
-		try:
-			verifier.verify(h, bytes(sig))
-			return True
-		except ValueError as e:
-			return False
+        	digest = hashes.Hash(hashes.SHA384())
+        	digest.update(data)
+        	hash = digest.finalize()
 
-class ECDSASHA1Signature(Signature):
-	ALG_ID = 0x9;
-	def __init__(self, key):
-		self.key = key;
-	def sign(self, data):
-		h = SHA1.new(data)
-		signer = DSS.new(self.key, 'fips-186-3')
-		return signer.sign(h);
-	def verify(self, sig, data):
-		h = SHA1.new(data)
-		verifier = DSS.new(self.key, 'fips-186-3')
-		try:
-			verifier.verify(h, bytes(sig))
-			return True
-		except ValueError as e:
-			return False
+        	signature = self.key.sign(
+            		hash,
+            	ec.ECDSA(Prehashed(hashes.SHA384()))
+        	)
+        	return signature
+	def verify(self, signature, data):
+        	digest = hashes.Hash(hashes.SHA384())
+        	digest.update(data)
+        	hash = digest.finalize()
+        	try:
+            		this.key.verify(
+                	signature,
+                	hash,
+                	ec.ECDSA(Prehashed(hashes.SHA384()))
+            	)
+            		return True
+        	except InvalidSignature:
+            		return False
+
+class ECDSASHA1Signature:
+    def __init__(self, key):
+        self.key = key;
+    def sign(self, data):
+        digest = hashes.Hash(hashes.SHA1())
+        digest.update(data)
+        hash = digest.finalize()
+
+        signature = self.key.sign(
+            hash,
+            ec.ECDSA(Prehashed(hashes.SHA1()))
+        )
+        return signature
+
+    def verify(self, signature, data):
+        digest = hashes.Hash(hashes.SHA1())
+        digest.update(data)
+        hash = digest.finalize()
+        try:
+            this.key.verify(
+                signature,
+                hash,
+                ec.ECDSA(Prehashed(hashes.SHA1()))
+            )
+            return True
+        except InvalidSignature:
+            return False
 
 class RSASHA256Signature(Signature):
 	ALG_ID = 0x5;
@@ -490,4 +528,3 @@ class ECDSALowPrivateKey():
 
 	def get_y(self):
 		return int(self.key.pointQ.y);
-
