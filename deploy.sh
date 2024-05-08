@@ -8,8 +8,15 @@ sudo apt-get install python3-pip
 sudo pip3 install pycryptodome
 sudo pip3 install interfaces
 sudo pip3 install numpy
+sudo pip3 install cryptography
 
 cd ..
+
+# If you what to use the tools folder, you need to install the following libraries
+sudo pip3 install matplotlib
+sudo pip3 install pandas
+
+
 
 # Removing unused folder
 sudo rm -rf mininet
