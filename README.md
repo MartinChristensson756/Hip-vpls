@@ -7,7 +7,7 @@ This repository contains implementation of VPLS based on Host Identity Protocol.
 Host Identity Protocol, or HIP, is a layer 3.5 solution, which was initially designed to 
 split the dual role of the IP address as both locator and identifier. By using the HIP protocol, 
 one can address not only mobility issues but also establish an authenticated secure channel. 
-This repository contains a simple implementation of HIP-VPLS. In this version, all HMAC classes 
+This repository contains a simple implementation of HIP-VPLS. In this version, HMAC classes 
 have been updated. The classes that have been updated is HMAC-SHA1, HMAC-SHA256 and HMAC-SHA384 and 
 they are now using the cryptography library instead of pycryptodome. 
 
